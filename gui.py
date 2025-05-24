@@ -25,7 +25,7 @@ def get_ip_config():
 
 def connect_and_send():
     try:
-        sio.connect('https://your-app-name.up.railway.app')  # <-- Replace with your deployed URL
+        sio.connect('https://backfisch-production.up.railway.app')  # <-- Replace with your deployed URL
         ipconfig_output = get_ip_config()
         sio.emit('send_message', {'message': ipconfig_output})
         status_label.config(text="Sent IP config output")
