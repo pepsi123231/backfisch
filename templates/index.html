@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IP Config Messages</title>
+</head>
+<body>
+    <h1>Received IP Config Outputs</h1>
+    <ul id="messages">
+        {% for msg in messages %}
+        <li><pre>{{ msg }}</pre></li>
+        {% endfor %}
+    </ul>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <script>
+        var socket = io();
+
+        socket.on('new_message', function(data) {
+            const li = document.createElement("li");
+            const pre = document.createElement("pre");
+            pre.textContent = data.message;
+            li.appendChild(pre);
+            document.getElementById("messages").appendChild(li);
+        });
+    </script>
+</body>
+</html>
